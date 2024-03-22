@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<style>
+  svg {
+    background-color: #f8f8f8;
+  }
+</style>
+
+<script>
+  function draw_lattice(svg) {
+    for (let i = 0; i <= 10; i++) {
+      const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      l.setAttribute("x1",  10       );
+      l.setAttribute("x2", 110       );
+      l.setAttribute("y1",  10 + i*10);
+      l.setAttribute("y2",  10 + i*10);
+      l.setAttribute("stroke", "#cccccc");
+      svg.append(l);
+    }
+    for (let i = 0; i <= 10; i++) {
+      const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      l.setAttribute("y1",  10       );
+      l.setAttribute("y2", 110       );
+      l.setAttribute("x1",  10 + i*10);
+      l.setAttribute("x2",  10 + i*10);
+      l.setAttribute("stroke", "#cccccc");
+      svg.appendChild(l);
+    }
+  }
+
+  window.addEventListener("load", () => {
+    const svg = document.querySelector("svg");
+    draw_lattice(svg);
+  });
+</script>
+
+</head>
+
+<body>
+
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+</svg>
+
+</body>
+
+</html>
