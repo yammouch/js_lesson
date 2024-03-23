@@ -31,9 +31,14 @@
     }
   }
 
+  let last_click;
   window.addEventListener("load", () => {
     const svg = document.querySelector("svg");
     draw_lattice(svg);
+    svg.addEventListener("click", (e) => {
+      last_click = e;
+      console.log("" + e.x + " " + e.y);
+    });
   });
 </script>
 
