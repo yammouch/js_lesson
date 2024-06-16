@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript">
+
+let audioCtx;
+let wave;
+
+function playSweep(time) {
+  const osc = new OscillatorNode(audioCtx, {
+    type: "sine",
+    frequency: 440
+  });
+  osc.connect(audioCtx.destination);
+  osc.start(time);
+  osc.stop(time + 1);
+}
+
+window.onload = () => {
+  audioCtx = new AudioContext();
+  const fire = document.getElementById("fire");
+  const resume = document.getElementById("resume");
+  const ta = document.getElementById("text_area");
+  let cnt = 0;
+  ta.innerText = "clicked " + cnt + "\n";
+  fire.addEventListener("click", () => {
+    cnt++;
+    ta.innerText = "clicked " + cnt + "\n";
+    playSweep(audioCtx.currentTime);
+  });
+  resume.addEventListener("click", () => {
+    audioCtx.resume().then( () => {
+      console.log('Playback resumed successfully');
+    });
+  });
+};
+</script>
+</head>
+<body>
+<button id="fire">fire</button>
+<button id="resume">resume</button>
+<div id="text_area"></div>
+</body>
+</html>
