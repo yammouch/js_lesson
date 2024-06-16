@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript">
+window.onload = () => {
+  const fire = document.getElementById("fire");
+  const ta = document.getElementById("text_area");
+  let cnt = 0;
+  ta.innerText = "clicked " + cnt + "\n";
+  fire.addEventListener("click", () => {
+    cnt++;
+    ta.innerText = "clicked " + cnt + "\n";
+  });
+};
+</script>
+</head>
+<body>
+<button id="fire">fire</button>
+<div id="text_area"></div>
+</body>
+</html>
