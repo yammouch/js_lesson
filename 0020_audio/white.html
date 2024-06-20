@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript">
+
+let audioContext;
+
+window.addEventListener("load", () => {
+  audioContext = new AudioContext();
+  const fire = document.getElementById("fire");
+  const resume = document.getElementById("resume");
+  const ta = document.getElementById("text_area");
+  let cnt = 0;
+  ta.innerText = "clicked " + cnt + "\n";
+  fire.addEventListener("click", () => {
+    cnt++;
+    ta.innerText = "clicked " + cnt + "\n";
+    play();
+  });
+  resume.addEventListener("click", () => {
+    audioContext.resume().then( () => {
+      console.log('Playback resumed successfully');
+    });
+  });
+
+});
+
+async function play() {
+  await audioContext.audioWorklet.addModule("white-noise-processor.js");
+  const whiteNoiseNode = new AudioWorkletNode(
+    audioContext,
+    "white-noise-processor",
+  );
+  whiteNoiseNode.connect(audioContext.destination);
+}
+
+</script>
+<body>
+<button id="fire">fire</button>
+<button id="resume">resume</button>
+<div id="text_area"></div>
+</body>
+</html>
