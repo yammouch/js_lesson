@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript">
+
+let audioContext;
+let lastKeydown;
+let lastKeyup;
+let squareNode = null;
+
+window.addEventListener("load", () => {
+  audioContext = new AudioContext();
+  const fire = document.getElementById("fire");
+  const resume = document.getElementById("resume");
+  const ta = document.getElementById("text_area");
+  let cnt = 0;
+  ta.innerText = "clicked " + cnt + "\n";
+  fire.addEventListener("click", () => {
+    cnt++;
+    ta.innerText = "clicked " + cnt + "\n";
+    play();
+  });
+  resume.addEventListener("click", () => {
+    audioContext.resume().then( () => {
+      console.log('Playback resumed successfully');
+    });
+  });
+  document.addEventListener("keydown", (e) => {
+    console.log(e.key + " " + e.code);
+    lastKeydown = e;
+    let td = document.getElementById("td_" + e.code);
+    if (td) {
+      td.style.background = "#fcf";
+    }
+    if (squareNode) {
+      if (e.code == "Comma") {
+        squareNode.port.postMessage("on");
+      }
+    }
+  });
+  document.addEventListener("keyup", (e) => {
+    lastKeyup = e;
+    let td = document.getElementById("td_" + e.code);
+    if (td) {
+      td.style.background = "#fff";
+    }
+    if (squareNode) {
+      if (e.code == "Comma") {
+        squareNode.port.postMessage("off");
+      }
+    }
+  });
+
+});
+
+async function play() {
+  await audioContext.audioWorklet.addModule("keyon.js");
+  squareNode = new AudioWorkletNode(
+    audioContext,
+    "sq-pr",
+  );
+  squareNode.connect(audioContext.destination);
+}
+
+</script>
+<body>
+<button id="fire">fire</button>
+<button id="resume">resume</button>
+<div id="text_area"></div>
+<table border="1">
+<tr>
+<td id="td_Digit1" colspan="2">1</td>
+<td id="td_Digit2" colspan="2">2</td>
+<td id="td_Digit3" colspan="2">3</td>
+<td id="td_Digit4" colspan="2">4</td>
+<td id="td_Digit5" colspan="2">5</td>
+<td id="td_Digit6" colspan="2">6</td>
+<td id="td_Digit7" colspan="2">7</td>
+<td id="td_Digit8" colspan="2">8</td>
+<td id="td_Digit9" colspan="2">9</td>
+<td id="td_Digit0" colspan="2">0</td>
+<td id="td_Minus" colspan="2">-</td>
+<td id="td_Equal" colspan="2">^</td>
+<td id="td_IntlYen" colspan="2">\</td>
+</tr>
+<tr>
+<td></td>
+<td id="td_KeyQ" colspan="2">Q</td>
+<td id="td_KeyW" colspan="2">W</td>
+<td id="td_KeyE" colspan="2">E</td>
+<td id="td_KeyR" colspan="2">R</td>
+<td id="td_KeyT" colspan="2">T</td>
+<td id="td_KeyY" colspan="2">Y</td>
+<td id="td_KeyU" colspan="2">U</td>
+<td id="td_KeyI" colspan="2">I</td>
+<td id="td_KeyO" colspan="2">O</td>
+<td id="td_KeyP" colspan="2">P</td>
+<td id="td_BracketLeft" colspan="2">@</td>
+<td id="td_BracketRight" colspan="2">[</td>
+</tr>
+<tr>
+<td colspan="2"></td>
+<td id="td_KeyA" colspan="2">A</td>
+<td id="td_KeyS" colspan="2">S</td>
+<td id="td_KeyD" colspan="2">D</td>
+<td id="td_KeyF" colspan="2">F</td>
+<td id="td_KeyG" colspan="2">G</td>
+<td id="td_KeyH" colspan="2">H</td>
+<td id="td_KeyJ" colspan="2">J</td>
+<td id="td_KeyK" colspan="2">K</td>
+<td id="td_KeyL" colspan="2">L</td>
+<td id="td_Semicolon" colspan="2">;</td>
+<td id="td_Quote" colspan="2">:</td>
+<td id="td_Backslash" colspan="2">]</td>
+</tr>
+<tr>
+<td id="td_ShiftLeft" colspan="3">Shift</td>
+<td id="td_KeyZ" colspan="2">Z</td>
+<td id="td_KeyX" colspan="2">X</td>
+<td id="td_KeyC" colspan="2">C</td>
+<td id="td_KeyV" colspan="2">V</td>
+<td id="td_KeyB" colspan="2">B</td>
+<td id="td_KeyN" colspan="2">N</td>
+<td id="td_KeyM" colspan="2">M</td>
+<td id="td_Comma" colspan="2">,</td>
+<td id="td_Period" colspan="2">.</td>
+<td id="td_Slash" colspan="2">/</td>
+<td id="td_IntlRo" colspan="2">\</td>
+<td id="td_ShiftRight" colspan="2">Shift</td>
+</tr>
+</table>
+</body>
+</html>
