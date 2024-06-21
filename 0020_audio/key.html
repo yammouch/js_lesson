@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript">
+
+let audioContext;
+let lastKeydown;
+let lastKeyup;
+
+window.addEventListener("load", () => {
+  audioContext = new AudioContext();
+  const fire = document.getElementById("fire");
+  const resume = document.getElementById("resume");
+  const ta = document.getElementById("text_area");
+  let cnt = 0;
+  ta.innerText = "clicked " + cnt + "\n";
+  fire.addEventListener("click", () => {
+    cnt++;
+    ta.innerText = "clicked " + cnt + "\n";
+    play();
+  });
+  resume.addEventListener("click", () => {
+    audioContext.resume().then( () => {
+      console.log('Playback resumed successfully');
+    });
+  });
+  document.addEventListener("keydown", (e) => {
+    console.log(e.key + " " + e.code);
+    lastKeydown = e;
+    let td = document.getElementById("td_" + e.code);
+    if (td) {
+      td.style.background = "#fcf";
+    }
+  });
+  document.addEventListener("keyup", (e) => {
+    lastKeyup = e;
+    let td = document.getElementById("td_" + e.code);
+    if (td) {
+      td.style.background = "#fff";
+    }
+  });
+
+});
+
+async function play() {
+  await audioContext.audioWorklet.addModule("sq-pr.js");
+  const squareNode = new AudioWorkletNode(
+    audioContext,
+    "sq-pr",
+  );
+  squareNode.connect(audioContext.destination);
+}
+
+</script>
+<body>
+<button id="fire">fire</button>
+<button id="resume">resume</button>
+<div id="text_area"></div>
+<table border="1">
+<tr>
+<td></td>
+<td id="td_Digit1">1</td>
+<td id="td_Digit2">2</td>
+<td id="td_Digit3">3</td>
+<td id="td_Digit4">4</td>
+<td id="td_Digit5">5</td>
+<td id="td_Digit6">6</td>
+<td id="td_Digit7">7</td>
+<td id="td_Digit8">8</td>
+<td id="td_Digit9">9</td>
+<td id="td_Digit0">0</td>
+<td id="td_Minus">-</td>
+<td id="td_Equal">^</td>
+<td id="td_IntlYen">\</td>
+</tr>
+<tr>
+<td></td>
+<td id="td_KeyQ">q</td>
+<td id="td_KeyW">w</td>
+<td id="td_KeyE">e</td>
+<td id="td_KeyR">r</td>
+<td id="td_KeyT">t</td>
+<td id="td_KeyY">y</td>
+<td id="td_KeyU">u</td>
+<td id="td_KeyI">i</td>
+<td id="td_KeyO">o</td>
+<td id="td_KeyP">p</td>
+<td id="td_BracketLeft">@</td>
+<td id="td_BRacketRight">[</td>
+</tr>
+<tr>
+<td></td>
+<td id="td_KeyA">a</td>
+<td id="td_KeyS">s</td>
+<td id="td_KeyD">d</td>
+<td id="td_KeyF">f</td>
+<td id="td_KeyG">g</td>
+<td id="td_KeyH">h</td>
+<td id="td_KeyJ">j</td>
+<td id="td_KeyK">k</td>
+<td id="td_KeyL">l</td>
+<td id="td_Semicolon">;</td>
+<td id="td_Quote">:</td>
+<td id="td_Backflash">]</td>
+</tr>
+<tr>
+<td id="td_ShiftLeft">Shift</td>
+<td id="td_KeyZ">z</td>
+<td id="td_KeyX">x</td>
+<td id="td_KeyC">c</td>
+<td id="td_KeyV">v</td>
+<td id="td_KeyB">b</td>
+<td id="td_KeyN">n</td>
+<td id="td_KeyM">m</td>
+<td id="td_Comma">,</td>
+<td id="td_Period">.</td>
+<td id="td_Slash">/</td>
+<td id="td_IntlRo">\</td>
+<td id="td_ShiftRight">Shift</td>
+</tr>
+</table>
+</body>
+</html>
