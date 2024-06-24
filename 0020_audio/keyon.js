@@ -1,32 +1,39 @@
 class Source {
 
-  constructor() {
+  constructor(divRatio) {
     this.phase = 0;
     this.on = false;
-    this.wave = new Float32Array(100);
-    this.buf = new Float32Array(this.wave.length);
-    for (let i = 0; i < 50; i++) {
-      this.wave[i] = 1.0;
+    this.bufsize = Math.ceil(divRatio);
+    this.weight = this.bufsize - divRatio;
+    this.wave = new Float32Array(this.bufsize);
+    this.buf = new Float32Array(this.bufsize);
+    for (let i = 0; i < this.bufsize; i++) {
+      if (i < this.bufsize / 2) {
+        this.wave[i] = 1.0;
+      } else {
+        this.wave[i] = -1.0;
+      }
     }
-    for (let i = 50; i < 100; i++) {
-      this.wave[i] = -1.0;
-    }
-    this.excite = this.wave.length;
+    this.excite = this.bufsize;
     this.decay = 1 - 1e-1;
   }
 
   pop() {
     let retval;
     retval = this.buf[this.phase];
-    if (this.excite < this.buf.length) {
+    let phaseNext = this.phase + 1;
+    if (this.buf.length <= phaseNext) {
+      phaseNext = 0;
+    }
+    if (this.excite < this.bufsize) {
       this.buf[this.phase] = this.wave[this.excite++];
     } else {
-      this.buf[this.phase] *= this.decay;
+      this.buf[this.phase]
+      = this.decay
+      * ( (1-this.weight)*this.buf[this.phase]
+        + this.weight*this.buf[phaseNext] );
     }
-    this.phase++;
-    if (this.buf.length <= this.phase) {
-      this.phase = 0;
-    }
+    this.phase = phaseNext;
     return retval;
   }
 
@@ -36,7 +43,9 @@ class SquareProcessor extends AudioWorkletProcessor {
 
   constructor() {
     super();
-    this.src = new Source();
+    this.src = new Source(100.1);
+    //this.src = new Source(99.9);
+    //this.src = new Source(100);
     this.port.onmessage = (e) => {
       if (e.data == "on") {
         if (!this.src.on) {
