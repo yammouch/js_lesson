@@ -55,7 +55,7 @@ class SquareProcessor extends AudioWorkletProcessor {
       } else if (e.data.cmd == "off") {
         this.src[e.data.note].decay = 1 - 1e-1;
       } else if (e.data.cmd == "init") {
-        let note = -34;
+        let note = -31;
         //this.src = [];
         for (let i = 0; i <= 37; i++, note++) {
           //this.src.push
@@ -81,7 +81,7 @@ class SquareProcessor extends AudioWorkletProcessor {
       for (let j = 0; j < this.src.length; j++) {
         sum += this.src[j].pop();
       }
-      channel[i] = sum;
+      channel[i] = 0.2*sum;
     }
     return true;
   }
