@@ -1,4 +1,4 @@
-export class Source {
+export class StringModel {
 
   constructor(divRatio) {
     this.phase = 0;
@@ -38,3 +38,37 @@ export class Source {
   }
 
 }
+
+export class Source {
+
+  constructor(e) {
+    this.strs = [];
+    let note = -31;
+    for (let i = 0; i <= 37; i++, note++) {
+      this.strs.push
+      ( new StringModel
+        ( e.data.sampleRate
+        / (e.data.master * 2**(note/12))
+        ));
+    }
+  }
+
+  on(e) {
+    this.strs[e.data.note].excite = 0;
+    this.strs[e.data.note].decay = 1 - 5e-3;
+  }
+
+  off(e) {
+    this.strs[e.data.note].decay = 1 - 1e-1;
+  }
+
+  pop() {
+    let sum = 0.0;
+    for (let j = 0; j < this.strs.length; j++) {
+      sum += this.strs[j].pop();
+    }
+    return sum;
+  }
+
+}
+
