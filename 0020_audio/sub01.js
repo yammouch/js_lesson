@@ -36,7 +36,6 @@ export class StringModel {
       }
       this.buf[this.inow] = this.decay*acc;
     }
-    return this.buf[this.inow];
   }
 
 }
@@ -67,9 +66,16 @@ export class Source {
   pop() {
     let sum = 0.0;
     for (let j = 0; j < this.strs.length; j++) {
-      sum += this.strs[j].pop();
+      this.strs[j].pop();
     }
-    return sum;
+    let to_lo = new Float32Array(this.strs.length);
+    for (let i = this.strs.length-1; 0 < i; i--) {
+      to_lo[i-1] = to_lo[i] + this.strs[i].buf[this.strs[i].inow];
+    }
+    for (let i = 0; i < this.strs.length-1; i++) {
+      this.strs[i].buf[this.strs[i].inow] += to_lo[i]*1e-2;
+    }
+    return to_lo[0] + this.strs[0].buf[this.strs[0].inow];
   }
 
 }
