@@ -1,45 +1,42 @@
 export class StringModel {
 
   constructor(divRatio) {
-    this.phase = 0;
+    this.inow = 0;
     this.on = false;
-    this.bufsize = Math.ceil(divRatio);
-    let weight = this.bufsize - divRatio;
+    let bufsize = Math.ceil(divRatio);
+    let weight = bufsize - divRatio;
     this.coeff = [1-weight, weight];
-    this.wave = new Float32Array(this.bufsize);
-    this.buf = new Float32Array(this.bufsize);
-    for (let i = 0; i < this.bufsize; i++) {
-      if (i < this.bufsize / 2) {
+    this.wave = new Float32Array(bufsize);
+    this.buf = new Float32Array(bufsize + 1);
+    for (let i = 0; i < bufsize; i++) {
+      if (i < bufsize / 2) {
         this.wave[i] = 1.0;
       } else {
         this.wave[i] = -1.0;
       }
     }
-    this.excite = this.bufsize;
+    this.excite = this.wave.length;
     this.decay = 1 - 1e-1;
   }
 
   pop() {
-    let retval;
-    retval = this.buf[this.phase];
-    let phaseNext = this.phase - 1;
-    if (phaseNext < 0) {
-      phaseNext += this.buf.length;
+    this.inow--;
+    if (this.inow < 0) {
+      this.inow += this.buf.length;
     }
-    if (this.excite < this.bufsize) {
-      this.buf[this.phase] = this.wave[this.excite++];
+    if (this.excite < this.wave.length) {
+      this.buf[this.inow] = this.wave[this.excite++];
     } else {
       let acc = 0.0;
-      for (let i = this.phase, j = this.coeff.length-1; 0 <= j; i--, j--) {
+      for (let i = this.inow-1, j = this.coeff.length-1; 0 <= j; i--, j--) {
         if (i < 0) {
           i += this.buf.length;
         }
         acc += this.coeff[j]*this.buf[i];
       }
-      this.buf[this.phase] = this.decay*acc;
+      this.buf[this.inow] = this.decay*acc;
     }
-    this.phase = phaseNext;
-    return retval;
+    return this.buf[this.inow];
   }
 
 }
