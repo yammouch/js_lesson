@@ -15,7 +15,7 @@ export class StringModel {
         this.wave[i] = -1.0;
       }
     }
-    this.excite = this.wave.length;
+    this.excite = 0;
     this.decay = 1 - 1e-1;
   }
 
@@ -24,8 +24,8 @@ export class StringModel {
     if (this.inow < 0) {
       this.inow += this.buf.length;
     }
-    if (this.excite < this.wave.length) {
-      this.buf[this.inow] = this.wave[this.excite++];
+    if (0 < this.excite) {
+      this.buf[this.inow] = this.wave[--this.excite];
     } else {
       let acc = 0.0;
       for (let i = this.inow-1, j = this.coeff.length-1; 0 <= j; i--, j--) {
@@ -56,7 +56,7 @@ export class Source {
   }
 
   on(e) {
-    this.strs[e.data.note].excite = 0;
+    this.strs[e.data.note].excite = this.strs[e.data.note].wave.length;
     this.strs[e.data.note].decay = 1 - 5e-3;
   }
 
