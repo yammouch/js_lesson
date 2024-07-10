@@ -1,40 +1,45 @@
 export class StringModel {
 
   constructor(divRatio) {
-    this.inow = 0;
-    this.bufsize = Math.ceil(divRatio) + 1;
+    this.phase = 0;
+    this.on = false;
+    this.bufsize = Math.ceil(divRatio);
     let weight = this.bufsize - divRatio;
     this.coeff = [1-weight, weight];
-    this.wave = new Float32Array(this.bufsize - 1);
+    this.wave = new Float32Array(this.bufsize);
     this.buf = new Float32Array(this.bufsize);
     for (let i = 0; i < this.bufsize; i++) {
-      if (i < (this.bufsize - 1) / 2) {
+      if (i < this.bufsize / 2) {
         this.wave[i] = 1.0;
       } else {
         this.wave[i] = -1.0;
       }
     }
-    this.excite = 0;
+    this.excite = this.bufsize;
     this.decay = 1 - 1e-1;
   }
 
   pop() {
-    this.inow--;
-    if (this.inow < 0) {
-      this.inow += this.buf.length;
+    let retval;
+    retval = this.buf[this.phase];
+    let phaseNext = this.phase - 1;
+    if (phaseNext < 0) {
+      phaseNext += this.buf.length;
     }
-    if (0 < this.excite) {
-      this.buf[this.inow] = this.wave[this.excite--];
+    if (this.excite < this.bufsize) {
+      this.buf[this.phase] = this.wave[this.excite++];
     } else {
       let acc = 0.0;
-      for (let i = coeff.length-1, j = inow - 1; 0 <= i; i--, j--) {
-        if (j < 0) {
-          j += this.buf.length;
+      for (let i = this.phase, j = this.coeff.length-1; 0 <= j; i--, j--) {
+        if (i < 0) {
+          i += this.buf.length;
         }
-        acc += this.coeff[i]*this.buf[j];
+        acc += this.coeff[j]*this.buf[i];
       }
+      this.buf[this.phase] = this.decay*acc;
     }
-    return buf[this.inow];
+    this.phase = phaseNext;
+    return retval;
   }
 
 }
@@ -54,7 +59,7 @@ export class Source {
   }
 
   on(e) {
-    this.strs[e.data.note].excite = this.strs[e.data.note].wave.length;
+    this.strs[e.data.note].excite = 0;
     this.strs[e.data.note].decay = 1 - 5e-3;
   }
 
