@@ -1,3 +1,45 @@
+export function maxRow(a, i) {
+  let maxi = i;
+  let maxv = Math.abs(a[i][i]);
+  for (let j = i+1; j < a.length; j++) {
+    if (maxv < Math.abs(a[j][i])) {
+      maxi = j;
+      maxv = Math.abs(a[j][i]);
+    }
+  }
+  let tmp = a[i];
+  a[i] = a[maxi];
+  a[maxi] = tmp;
+}
+
+export function divRow(a, i) {
+  let inv = 1.0/a[i][i];
+  for (let j = 0; j < a[i].length; j++) {
+    a[i][j] *= inv;
+  }
+}
+
+export function sweepRows(a, i) {
+  for (let j = 0; j < a.length; j++) {
+    if (i == j) {
+      continue;
+    }
+
+    let x = a[j][i];
+    for (let k = 0; k < a[j].length; k++) {
+      a[j][k] -= a[i][k] * x;
+    }
+  }
+}
+
+export function linSolve(a) {
+  for (let i = 0; i < a.length; i++) {
+    maxRow(a, i);
+    divRow(a, i);
+    sweepRows(a, i);
+  }
+}
+
 export class StringModel {
 
   constructor(divRatio) {
