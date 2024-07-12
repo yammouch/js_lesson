@@ -2,7 +2,8 @@
 <html>
 <head>
 <script type="module">
-import { maxRow, divRow, sweepRows, linSolve } from "./sub01.js";
+import { maxRow, divRow, sweepRows, linSolve, calcCoeff }
+ from "./sub01.js";
 window.addEventListener( "load", () => {
   let ta = document.getElementById("textarea");
   let a = [[2.0, 3.0, 40.0], [3.0, 4.0, 55.0]];
@@ -26,6 +27,9 @@ window.addEventListener( "load", () => {
        [2.0, 1.0, 1.0, 5.0]];
   linSolve(a);
   ta.innerText += a.toString() + "\n";
+  ta.innerText += calcCoeff(2.5, 1).toString() + "\n";
+  ta.innerText += calcCoeff(20.5, 1).toString() + "\n";
+  ta.innerText += calcCoeff(20.2, 1).toString() + "\n";
 } );
 </script>
 </head>

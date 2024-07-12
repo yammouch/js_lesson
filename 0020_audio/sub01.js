@@ -40,6 +40,24 @@ export function linSolve(a) {
   }
 }
 
+export function calcCoeff(divRatio, nHarm) {
+  let divN = [];
+  for (let i = -nHarm; i < nHarm; i++) {
+    divN.push(i + Math.ceil(divRatio));
+  }
+  let system = [];
+  for (let i = 1; i <= nHarm; i++) {
+    let row = divN.map( (x) => Math.cos(2*Math.PI*x/divRatio*i) );
+    row.push(1.0);
+    system.push(row);
+    row = divN.map( (x) => Math.sin(2*Math.PI*x/divRatio*i) );
+    row.push(0.0);
+    system.push(row);
+  }
+  linSolve(system);
+  return system.map( (a) => a[2*nHarm] );
+}
+
 export class StringModel {
 
   constructor(divRatio) {
@@ -47,7 +65,7 @@ export class StringModel {
     this.on = false;
     let bufsize = Math.ceil(divRatio);
     let weight = bufsize - divRatio;
-    this.coeff = [1-weight, weight];
+    this.coeff = calcCoeff(divRatio, 1);
     this.wave = new Float32Array(bufsize);
     this.buf = new Float32Array(bufsize + 1);
     for (let i = 0; i < bufsize; i++) {
