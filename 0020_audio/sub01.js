@@ -61,13 +61,13 @@ export function calcCoeff(divRatio, nHarm) {
 export class StringModel {
 
   constructor(divRatio) {
+    let nHarm = 4;
     this.inow = 0;
     this.on = false;
     let bufsize = Math.ceil(divRatio);
-    let weight = bufsize - divRatio;
-    this.coeff = calcCoeff(divRatio, 1);
+    this.coeff = calcCoeff(divRatio, nHarm);
     this.wave = new Float32Array(bufsize);
-    this.buf = new Float32Array(bufsize + 1);
+    this.buf = new Float32Array(bufsize + nHarm);
     for (let i = 0; i < bufsize; i++) {
       if (i < bufsize / 2) {
         this.wave[i] = 1.0;
@@ -116,7 +116,7 @@ export class Source {
 
   on(e) {
     this.strs[e.data.note].excite = this.strs[e.data.note].wave.length;
-    this.strs[e.data.note].decay = 1 - 5e-3;
+    this.strs[e.data.note].decay = 1 - 1e-2;
   }
 
   off(e) {
