@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript">
+window.addEventListener( "load", () => {
+  console.log("hello");
+  navigator.permissions.query({ name: "midi", sysex: true }).then((result) => {
+    console.log(result);
+    let ta = document.getElementById("textarea");
+    ta.innerText = result.state;
+  });
+});
+</script>
+</head>
+<body>
+<div id="textarea"></div>
+</body>
+</html>
