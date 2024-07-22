@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript">
+
+let audioContext;
+let sineNode = null;
+
+window.addEventListener("load", () => {
+  audioContext = new AudioContext();
+  const resume = document.getElementById("resume");
+  let cnt = 0;
+  resume.addEventListener("click", () => {
+    audioContext.resume().then( () => {
+      console.log('Playback resumed successfully');
+    });
+  });
+  play();
+
+});
+
+async function play() {
+  await audioContext.audioWorklet.addModule("sine_worklet.js");
+  sineNode = new AudioWorkletNode(
+    audioContext,
+    "sine-worklet",
+  );
+  sineNode.connect(audioContext.destination);
+  sineNode.port.postMessage({cmd:"init", sampleRate:audioContext.sampleRate, master:440});
+}
+
+</script>
+<body>
+<button id="resume">resume</button>
+</body>
+</html>
