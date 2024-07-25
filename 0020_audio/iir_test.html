@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript">
+
+let memory_base;
+let memory;
+let instance;
+
+window.addEventListener("load", () => {
+
+  fetch("iir.wasm").then((res) => res.arrayBuffer())
+  .then((bytes) => {
+    const module = new WebAssembly.Module(bytes);
+    memory_base = new WebAssembly.Global(
+      { value: "i32",
+        mutable: false },
+      0x100);
+    memory = new WebAssembly.Memory({ initial: 1 });
+    instance = new WebAssembly.Instance(
+      module,
+      { env: { __memory_base: memory_base, memory: memory } } );
+  })
+});
+</script>
+</head>
+<body>
+</body>
+</html>
