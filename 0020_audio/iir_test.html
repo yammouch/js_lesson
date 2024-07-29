@@ -3,6 +3,42 @@
 <head>
 <script type="text/javascript">
 
+function parseWasmDlinkMemInfo(a) {
+  let pos = 0;
+  const retval = {};
+  const names = ["memorysize", "memoryalignment",
+                 "tablesize", "tablealignment"];
+  for (let i = 0; i < 4; i++) {
+    let cnt = 0;
+    let acc = 0;
+    do {
+      acc |= (a[pos] & 0x7f) << (cnt++ * 7);
+    } while (a[pos++] & 0x80);
+    retval[names[i]] = acc;
+  }
+  return retval;
+}
+
+function parseDylink0(a) {
+  let pos = 0;
+  const retval = [];
+  while (pos < a.length) {
+    const subsection = { type: a[pos++] };
+    let cnt = 0;
+    let acc = 0;
+    do {
+      acc |= (a[pos] & 0x7f) << (cnt++ * 7);
+    } while (a[pos++] & 0x80);
+    subsection.payload_data = a.slice(pos, pos+acc);
+    if (subsection.type === 1) {
+      subsection.meminfo = parseWasmDlinkMemInfo(subsection.payload_data);
+    }
+    retval.push[subsection];
+    pos += acc;
+  }
+}
+
+let dylink0;
 let memory_base;
 let memory;
 let instance;
@@ -12,6 +48,8 @@ window.addEventListener("load", () => {
   fetch("iir.wasm").then((res) => res.arrayBuffer())
   .then((bytes) => {
     const module = new WebAssembly.Module(bytes);
+    const dylink0Array = WebAssembly.Module.customSections(module, "dylink.0");
+    dylink0 = parseDylink0(new Uint8Array(dylink0Array[0]));
     memory_base = new WebAssembly.Global(
       { value: "i32",
         mutable: false },
