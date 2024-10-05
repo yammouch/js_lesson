@@ -1,7 +1,5 @@
 #include <cstdint>
 
-double __attribute__((visibility("default"))) buf_dbg[1024];
-
 void __attribute__((visibility("default"))) convolve(
  size_t o1,
  const double *p1,
