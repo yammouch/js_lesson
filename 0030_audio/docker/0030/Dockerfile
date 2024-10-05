@@ -8,6 +8,7 @@ RUN apt-get install -y less
 RUN apt-get install -y lsof
 RUN apt-get install -y ncat
 RUN apt-get install -y python3
+RUN DEBIAN_FRONTEND=noninteractive TZ=Asia/Tokyo apt-get install -y python3-tk
 RUN apt-get install -y python3-pip
 RUN apt-get install -y git
 RUN apt-get install -y curl
