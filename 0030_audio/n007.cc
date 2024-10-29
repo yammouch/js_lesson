@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <cstdlib>
 
 void __attribute__((visibility("default"))) convolve(
  size_t o1,
